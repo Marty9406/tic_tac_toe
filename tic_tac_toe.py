@@ -1,8 +1,8 @@
-def print_field():
-    for row in field:
-        print(FIELD_SEPARATOR)
-        print('|{:^3}|{:^3}|{:^3}|'.format(*row))
-    print(FIELD_SEPARATOR)
+def print_area():
+    for line in area:
+        print(AREA_SEPARATOR)
+        print('|{:^3}|{:^3}|{:^3}|'.format(*line))
+    print(AREA_SEPARATOR)
 
 
 def choose_player():
@@ -14,7 +14,7 @@ def choose_player():
 
 def get_next_move(player):
     while True:
-        print(TEXT_SEPARATOR_DOUBLE)
+        print(TEXT_SEPARATOR)
         number = input('Player {} | Please enter your number: '.format(player))
 
         if number.isnumeric():
@@ -30,7 +30,7 @@ def get_next_move(player):
             print('Wrong move!')
             continue
 
-        if players[0] in field[row][column] or players[1] in field[row][column]:
+        if players[0] in area[row][column] or players[1] in area[row][column]:
             print('This box is already taken!')
             continue
         else:
@@ -39,42 +39,47 @@ def get_next_move(player):
 
 def find_winner():
     for player in players:
-        if field[0] == [player, player, player]\
-        or field[1] == [player, player, player]\
-        or field[2] == [player, player, player]\
-        or field[0][0] == player and field[1][0] == player and field[2][0] == player\
-        or field[0][1] == player and field[1][1] == player and field[2][1] == player\
-        or field[0][2] == player and field[1][2] == player and field[2][2] == player\
-        or field[0][0] == player and field[1][1] == player and field[2][2] == player\
-        or field[0][2] == player and field[1][1] == player and field[2][0] == player:
-            print(TEXT_SEPARATOR_DOUBLE)
-            print('Congratulations, the player {} won!'.format(player))
-            print(TEXT_SEPARATOR_DOUBLE)
-            exit()
+        for i in win_combinations:
+            if [area[i[0]][i[1]], area[i[2]][i[3]], area[i[4]][i[5]]] == [player, player, player]:
+                print(TEXT_SEPARATOR)
+                print('Congratulations, the player {} won!'.format(player))
+                print(TEXT_SEPARATOR)
+                exit()
 
+
+def find_draw():
     if turn == 10:
-        print(TEXT_SEPARATOR_DOUBLE)
+        print(TEXT_SEPARATOR)
         print('It\'s a draw!')
-        print(TEXT_SEPARATOR_DOUBLE)
+        print(TEXT_SEPARATOR)
         exit()
 
 
+AREA_SEPARATOR = '+---+---+---+'
+TEXT_SEPARATOR = 45*'='
 players = ['O', 'X']
+turn = 1
 
-field = [
+area = [
     ['', '', ''],
     ['', '', ''],
     ['', '', '']
 ]
 
-FIELD_SEPARATOR = '+---+---+---+'
-TEXT_SEPARATOR_DOUBLE = 45*'='
-TEXT_SEPARATOR_SIMPLE = 45*'-'
-turn = 1
+win_combinations = [
+    [0, 0, 0, 1, 0, 2],
+    [1, 0, 1, 1, 1, 2],
+    [2, 0, 2, 1, 2, 2],
+    [0, 0, 1, 0, 2, 0],
+    [0, 1, 1, 1, 2, 1],
+    [0, 2, 1, 2, 2, 2],
+    [0, 0, 1, 1, 2, 2],
+    [0, 2, 1, 1, 2, 0]
+]
 
 print(
     'Welcome to Tic Tac Toe',
-    TEXT_SEPARATOR_DOUBLE,
+    TEXT_SEPARATOR,
     'GAME RULES:',
     'Each player can place one mark (or stone)',
     'per turn on the 3x3 grid. The WINNER is',
@@ -83,16 +88,17 @@ print(
     '- horizontal,',
     '- vertical or',
     '- diagonal row.',
-    TEXT_SEPARATOR_DOUBLE,
+    TEXT_SEPARATOR,
     'Let\'s start the game',
-    TEXT_SEPARATOR_SIMPLE,
+    TEXT_SEPARATOR,
     sep='\n'
-      )
+)
 
 while True:
-    print_field()
+    print_area()
     find_winner()
-    row, column = get_next_move(choose_player())
-    field[row][column] = choose_player()
+    find_draw()
+    chosen_row, chosen_column = get_next_move(choose_player())
+    area[chosen_row][chosen_column] = choose_player()
     turn += 1
-    print(TEXT_SEPARATOR_DOUBLE)
+    print(TEXT_SEPARATOR)
